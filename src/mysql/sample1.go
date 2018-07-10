@@ -15,27 +15,34 @@ func main() {
 		panic(err.Error())
 	}
 	
+	// 後でクローズするようにスケジューリング
 	defer db.Close()
 	
+	// SQL実行
 	rows, err := db.Query("select * from tbl_sample")
 	
 	if err != nil {
 		panic(err.Error())
 	}
 	
+	// カラム名の一覧を取得する
 	columns, err := rows.Columns()
 	
 	if err != nil {
 		panic(err.Error())
 	}
 	
+	// カラム数分のデータの入れ物を準備してあげる
 	values   := make([]sql.RawBytes, len(columns))
+	// 
 	scanArgs := make([]interface{}, len(values))
+	fmt.Println(scanArgs)
 	
 	for i := range values {
 		scanArgs[i] = &values[i]
 	}
 	
+	// 取得したレコード分処理
 	for rows.Next() {
 		err = rows.Scan(scanArgs...)
 		if err != nil {
